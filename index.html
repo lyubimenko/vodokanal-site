@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Водоканал Болград</title>
+  <style>
+    /* Reset */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      font-size: 18px;
+      line-height: 1.6;
+      background-color: #f9f7f1;
+      color: #222;
+      transition: background-color 0.3s, color 0.3s;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    body.dark {
+      background-color: #121212;
+      color: #eee;
+    }
+
+    /* Header */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background-color: #2c2c2c;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 15px 30px;
+      z-index: 10000;
+      height: 70px;
+      user-select: none;
+    }
+
+    body.dark header {
+      background-color: #1e1e1e;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    nav {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      font-size: 18px;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      padding-bottom: 3px;
+      border-bottom: 3px solid transparent;
+      transition: border-color 0.3s;
+    }
+
+    nav a:hover,
+    nav a.active {
+      border-bottom: 3px solid red;
+    }
+
+    /* Payment link */
+    .payment-link {
+      background-color: #e63946;
+      padding: 8px 15px;
+      border-radius: 5px;
+      font-weight: bold;
+      color: white;
+      text-decoration: none;
+      margin-left: 30px;
+      transition: background-color 0.3s;
+    }
+
+    .payment-link:hover {
+      background-color: #b22234;
+    }
+
+    /* Theme toggle */
+    .theme-toggle {
+      background-color: #444;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 8px 12px;
+      cursor: pointer;
+      margin-left: 20px;
+      font-weight: bold;
+      user-select: none;
+      transition: background-color 0.3s;
+    }
+
+    .theme-toggle:hover {
+      background-color: #666;
+    }
+
+    body.dark .theme-toggle {
+      background-color: #bbb;
+      color: #222;
+    }
+
+    body.dark .theme-toggle:hover {
+      background-color: #ddd;
+    }
+
+    /* Notification banner */
+    #notification {
+      margin-top: 70px; /* header height */
+      background-color: #ffdddd;
+      color: #990000;
+      font-weight: bold;
+      padding: 15px 30px;
+      text-align: center;
+      user-select: none;
+    }
+
+    body.dark #notification {
+      background-color: #660000;
+      color: #ffaaaa;
+    }
+
+    /* Address input block */
+    .address-check {
+      margin: 20px auto 40px auto;
+      max-width: 480px;
+      text-align: center;
+      user-select: none;
+    }
+
+    .address-check input[type="text"] {
+      font-size: 22px;
+      padding: 14px 18px;
+      width: 100%;
+      border-radius: 10px;
+      border: 1px solid #333;
+      background-color: rgba(0, 0, 0, 0.1);
+      color: #111;
+      font-weight: 600;
+      transition: background-color 0.3s, color 0.3s;
+      outline-offset: 2px;
+    }
+
+    .address-check input[type="text"]::placeholder {
+      color: rgba(0, 0, 0, 0.4);
+    }
+
+    body.dark .address-check input[type="text"] {
+      background-color: rgba(255, 255, 255, 0.1);
+      border-color: #ccc;
+      color: #eee;
+    }
+
+    body.dark .address-check input[type="text"]::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .address-check button {
+      font-size: 20px;
+      margin-top: 15px;
+      padding: 14px 28px;
+      border-radius: 10px;
+      border: none;
+      background-color: #e63946;
+      color: white;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.3s;
+    }
+
+    .address-check button:hover {
+      background-color: #b22234;
+    }
+
+    #resultMessage {
+      margin-left: 15px;
+      font-weight: bold;
+      display: block;
+      margin-top: 15px;
+      min-height: 28px;
+      user-select: text;
+    }
+
+    /* Hero */
+    .hero {
+      flex-grow: 1;
+      background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80') center/cover no-repeat;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding-top: 70px;
+      text-align: center;
+      position: relative;
+      color: white;
+      user-select: none;
+    }
+
+    body.dark .hero {
+      filter: brightness(0.75);
+    }
+
+    .register-form {
+      background-color: rgba(0, 0, 0, 0.7);
+      padding: 40px 30px;
+      border-radius: 12px;
+      max-width: 600px;
+      width: 90%;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+    }
+
+    .register-form input,
+    .register-form textarea {
+      width: 100%;
+      font-size: 16px;
+      padding: 12px 14px;
+      margin: 12px 0;
+      border-radius: 6px;
+      border: none;
+      outline: none;
+    }
+
+    .register-form input {
+      background-color: #f0f0f0;
+      color: #222;
+    }
+
+    .register-form textarea {
+      resize: vertical;
+      background-color: #f0f0f0;
+      color: #222;
+      min-height: 100px;
+    }
+
+    body.dark .register-form input,
+    body.dark .register-form textarea {
+      background-color: #333;
+      color: #eee;
+    }
+
+    .register-form button {
+      background-color: #e63946;
+      border: none;
+      color: white;
+      padding: 14px 22px;
+      font-size: 18px;
+      cursor: pointer;
+      border-radius: 8px;
+      font-weight: bold;
+      transition: background-color 0.3s;
+      margin-top: 10px;
+      width: 100%;
+    }
+
+    .register-form button:hover {
+      background-color: #b22234;
+    }
+
+    /* Sections */
+    section {
+      max-width: 1100px;
+      margin: 60px auto;
+      padding: 50px 30px;
+      border-radius: 12px;
+      box-sizing: border-box;
+    }
+
+    /* About section */
+    #about {
+      background-color: #dcd7cd;
+      margin-top: 80px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 40px;
+      user-select: none;
+    }
+
+    body.dark #about {
+      background-color: #3a3a3a;
+    }
+
+    #about .image-box {
+      flex: 1 1 300px;
+      min-width: 260px;
+      max-width: 320px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #about .image-box img {
+      width: 100%;
+      height: auto;
+      border-radius: 12px;
+      user-select: none;
+    }
+
+    #about .info-box {
+      flex: 2 1 400px;
+      max-width: 650px;
+      font-size: 18px;
+      line-height: 1.4;
+      position: relative;
+      user-select: text;
+    }
+
+    #about h2 {
+      font-size: 28px;
+      margin-bottom: 12px;
+      padding-bottom: 6px;
+      border-bottom: 4px solid red;
+      max-width: fit-content;
+    }
+
+    /* Services */
+    #services {
+      background-color: #fff;
+      user-select: none;
+      min-height: 400px;
+    }
+
+    body.dark #services {
+      background-color: #222;
+    }
+
+    .services-wrapper {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 30px;
+      justify-content: center;
+    }
+
+    .service-box {
+      width: 300px;
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      overflow: hidden;
+      text-align: center;
+      transition: background-color 0.3s;
+    }
+
+    body.dark .service-box {
+      background-color: #444;
+      box-shadow: 0 0 12px rgba(255,255,255,0.1);
+    }
+
+    .service-box img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      user-select: none;
+    }
+
+    .service-box p {
+      padding: 15px;
+      font-size: 16px;
+      color: #333;
+    }
+
+    body.dark .service-box p {
+      color: #eee;
+    }
+
+    /* Contacts */
+    #contacts {
+      position: relative;
+      color: #333;
+      margin-bottom: 40px;
+      min-height: 450px;
+      border-radius: 12px;
+      overflow: hidden;
+      user-select: none;
+    }
+
+    #contacts::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: url('https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80') center/cover no-repeat;
+      opacity: 0.5;
+      z-index: 0;
+      transition: filter 0.3s;
+    }
+
+    body.dark #contacts::before {
+      filter: brightness(0.4);
+    }
+
+    #contacts .contact-wrapper {
+      position: relative;
+      background-color: rgba(255,255,255,0.95);
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 40px;
+      border-radius: 12px;
+      z-index: 1;
+      box-sizing: border-box;
+      color: #222;
+      user-select: text;
+    }
+
+    body.dark #contacts .contact-wrapper {
+      background-color: rgba(40, 40, 40, 0.95);
+      color: #ddd;
+    }
+
+    #contacts h2 {
+      margin-bottom: 20px;
+      font-size: 28px;
+      user-select: text;
+    }
+
+    #contacts p {
+      font-size: 18px;
+      margin-bottom: 15px;
+      user-select: text;
+    }
+
+    #contacts a.viber-button {
+      display: inline-block;
+      background-color: #59267c;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-weight: bold;
+      text-decoration: none;
+      user-select: none;
+      transition: background-color 0.3s;
+    }
+
+    #contacts a.viber-button:hover {
+      background-color: #440d58;
+    }
+
+    #contacts iframe {
+      width: 100%;
+      height: 400px;
+      border: none;
+      border-radius: 12px;
+      margin-top: 25px;
+      user-select: none;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 20px 10px;
+      font-size: 14px;
+      background-color: #222;
+      color: #bbb;
+      user-select: none;
+    }
+
+    body.dark footer {
+      background-color: #111;
+      color: #888;
+    }
+
+    /* Responsive */
+    @media (max-width: 850px) {
+      #about {
+        flex-direction: column;
+        padding: 20px;
+      }
+
+      #about .image-box, #about .info-box {
+        max-width: 100%;
+      }
+
+      nav {
+        font-size: 16px;
+      }
+
+      .register-form {
+        padding: 30px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">Водоканал Болград</div>
+    <nav>
+      <a href="#home" class="active">Головна</a>
+      <a href="#about">Про нас</a>
+      <a href="#services">Послуги</a>
+      <a href="#contacts">Контакти</a>
+      <a href="https://debet.com.ua/ru/user/password" target="_blank" class="payment-link" rel="noopener noreferrer">Оплата</a>
+    </nav>
+    <button class="theme-toggle" aria-label="Переключити тему">🌙</button>
+  </header>
+
+  <div id="notification" style="display:none;"></div>
+
+  <div class="address-check" aria-label="Перевірка адреси">
+    <input type="text" id="addressInput" placeholder="Введіть вашу адресу" aria-describedby="resultMessage" />
+    <button onclick="checkAddress()">Перевірити</button>
+    <div id="resultMessage" role="alert" aria-live="polite"></div>
+  </div>
+
+  <main>
+    <section class="hero" id="home" aria-label="Головна сторінка">
+      <div class="register-form" role="form" aria-labelledby="register-title">
+        <h1 id="register-title" style="margin-bottom:20px;">Водоканал Болград</h1>
+        <input type="text" placeholder="Ваше ім'я" aria-label="Ваше ім'я" />
+        <input type="email" placeholder="Email" aria-label="Email" />
+        <input type="password" placeholder="Пароль" aria-label="Пароль" />
+        <textarea placeholder="Повідомлення" aria-label="Повідомлення"></textarea>
+        <button type="submit">Зареєструватись</button>
+      </div>
+    </section>
+
+    <section id="about" aria-labelledby="about-title" tabindex="0">
+      <div class="image-box">
+        <img src="https://vgo-kraina.org/static/images/photo/%D0%93%D0%B5%D1%80%D0%B1_3.jpg" alt="Герб Болграду" />
+      </div>
+      <div class="info-box">
+        <h2 id="about-title">Водоканал <span style="color:red; border-bottom: 3px solid red;">Болград</span></h2>
+        <p>Ми забезпечуємо якісне та надійне водопостачання для мешканців міста Болград. Наша команда професіоналів дбає про те, щоб кожен мав доступ до чистої питної води.</p>
+      </div>
+    </section>
+
+    <section id="services" aria-labelledby="services-title" tabindex="0">
+      <h2 id="services-title" style="text-align:center; margin-bottom:40px;">Наші послуги</h2>
+      <div class="services-wrapper" role="list">
+        <div class="service-box" role="listitem">
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNGeXqxOqTKMdBjE8Nb3YFpx7S7_YeR-6mu0TrQojiTa2eKZ9z30AEGeLAT_XhcIVKokc&usqp=CAU" alt="Чиста вода" />
+          <p>Чисте водопостачання</p>
+        </div>
+        <div class="service-box" role="listitem">
+          <img src="https://img.freepik.com/free-photo/service-maintenance-worker-repairing_23-2149176719.jpg?semt=ais_items_boosted&w=740" alt="Ремонт мережі" />
+          <p>Ремонт водопровідних мереж</p>
+        </div>
+        <div class="service-box" role="listitem">
+          <img src="https://img.freepik.com/free-photo/technologist-white-uniform-checking-quality-industrial-production-factory_342744-1169.jpg?ga=GA1.1.1816925372.1749508450&semt=ais_hybrid&w=740" alt="Моніторинг якості" />
+          <p>Моніторинг якості води</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="contacts" aria-labelledby="contacts-title" tabindex="0">
+      <div class="contact-wrapper">
+        <h2 id="contacts-title">Контакти</h2>
+        <p>Телефон: +38 (04849) 123-456</p>
+        <p>Адреса: вул. Терещенко,43, Болград</p>
+        <a href="viber://chat?number=%2B3804849123456" class="viber-button" aria-label="Написати в Viber">Написати в Viber</a>
+        <iframe
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2886.423693195042!2d29.828338315503277!3d45.61936837910101!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40c3f1b94c68327d%3A0x7e2b4a4b177a3c98!2z0JHRgNC40LrQvtC70LDRgdC60LjQuSDQk9C-0LLQviwgMTIsINC_0L7RgdC60LjQtQ!5e0!3m2!1suk!2sua!4v1686437993456!5m2!1suk!2sua"
+          allowfullscreen=""
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          title="Карта розташування Водоканалу Болград"
+        >
+		</iframe>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    &copy; 2025 Водоканал Болград. Всі права захищені.
+  </footer>
+
+  <script>
+    // Theme toggle
+    const themeToggleBtn = document.querySelector('.theme-toggle');
+    const bodyEl = document.body;
+
+    // Запоминаем тему в localStorage
+    if(localStorage.getItem('theme') === 'dark'){
+      bodyEl.classList.add('dark');
+      themeToggleBtn.textContent = '☀️';
+    }
+
+    themeToggleBtn.addEventListener('click', () => {
+      bodyEl.classList.toggle('dark');
+      if(bodyEl.classList.contains('dark')){
+        themeToggleBtn.textContent = '☀️';
+        localStorage.setItem('theme', 'dark');
+      } else {
+        themeToggleBtn.textContent = '🌙';
+        localStorage.setItem('theme', 'light');
+      }
+    });
+
+    // Уведомление (можно менять текст тут)
+    const notification = document.getElementById('notification');
+    const notificationText = 'Увага! Через ремонт можливі перебої з водопостачанням у деяких районах.';
+    if(notificationText.trim().length){
+      notification.textContent = notificationText;
+      notification.style.display = 'block';
+    }
+
+    // Проверка адреса — пример логики
+    function checkAddress(){
+      const input = document.getElementById('addressInput');
+      const result = document.getElementById('resultMessage');
+      const val = input.value.trim();
+
+      if(!val){
+        result.textContent = 'Будь ласка, введіть адресу.';
+        result.style.color = '#990000';
+        return;
+      }
+
+      // Здесь можно добавить реальную проверку, например через API
+      // Пока просто пример: если адрес содержит "Болград" - OK, иначе ошибка
+
+      if(val.toLowerCase().includes('болград')){
+        result.textContent = 'Адреса знайдена в базі.';
+        result.style.color = 'green';
+      } else {
+        result.textContent = 'Адреса не знайдена.';
+        result.style.color = '#990000';
+      }
+    }
+
+    // Меню активный пункт
+    const menuLinks = document.querySelectorAll('nav a:not(.payment-link)');
+    menuLinks.forEach(link => {
+      link.addEventListener('click', (e) => {
+        menuLinks.forEach(l => l.classList.remove('active'));
+        e.target.classList.add('active');
+      });
+    });
+	window.onload = () => {
+  const notificationText = localStorage.getItem('notificationText');
+  const addressNews = localStorage.getItem('addressNews');
+
+  if (notificationText) {
+    document.getElementById('notification').textContent = notificationText;
+  }
+
+  if (addressNews) {
+    try {
+      window.addressProblems = JSON.parse(addressNews);
+    } catch {
+      window.addressProblems = {};
+    }
+  } else {
+    window.addressProblems = {};
+  }
+};
+
+function checkAddress() {
+  const input = document.getElementById('addressInput');
+  const address = input.value.trim();
+  const result = document.getElementById('resultMessage');
+
+  if (window.addressProblems && window.addressProblems[address]) {
+    result.textContent = `❗ ${window.addressProblems[address]}`;
+    result.style.color = 'red';
+  } else {
+    result.textContent = '✅ Немає проблем';
+    result.style.color = 'green';
+  }
+}
+
+  </script>
+  <a href="admin.html" class="admin-link" target="_blank"></a>
+
+</body>
+</html>
